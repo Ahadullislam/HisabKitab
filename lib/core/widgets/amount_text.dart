@@ -1,46 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
-import '../constants/app_colors.dart';
-import '../utils/currency_formatter.dart';
+import 'package:intl/intl.dart';
+import '../constants/app_strings.dart';
 
-class AmountText extends StatelessWidget {
-  final double amount;
-  final bool isIncome;
-  final double fontSize;
-  final bool showSign;
-  final bool animate;
+class CurrencyFormatter {
+  CurrencyFormatter._();
 
-  const AmountText({
-    super.key,
-    required this.amount,
-    this.isIncome = false,
-    this.fontSize = 16,
-    this.showSign = false,
-    this.animate = false,
-  });
+  static final _formatter = NumberFormat('#,##,##0.00', 'en_IN');
 
-  @override
-  Widget build(BuildContext context) {
-    final color = isIncome ? AppColors.income : AppColors.expense;
-    final text  = showSign
-        ? CurrencyFormatter.formatSigned(amount, isIncome: isIncome)
-        : CurrencyFormatter.format(amount);
+  static String format(double amount) =>
+      '${AppStrings.currency}${_formatter.format(amount)}';
 
-    Widget w = Text(
-      text,
-      style: TextStyle(
-        fontSize: fontSize,
-        fontWeight: FontWeight.w700,
-        color: color,
-        letterSpacing: -0.3,
-      ),
-    );
-
-    if (animate) {
-      w = w.animate()
-          .fadeIn(duration: 600.ms)
-          .shimmer(duration: 1200.ms, color: color.withOpacity(0.3));
+  static String formatCompact(double amount) {
+    if (amount >= 100000) {
+      return '${AppStrings.currency}${(amount / 100000).toStringAsFixed(1)}L';
+    } else if (amount >= 1000) {
+      return '${AppStrings.currency}${(amount / 1000).toStringAsFixed(1)}K';
     }
-    return w;
+    return format(amount);
+  }
+
+  static String formatSigned(double amount, {bool isIncome = false}) {
+    final prefix = isIncome ? '+' : '-';
+    return '$prefix${format(amount.abs())}';
   }
 }

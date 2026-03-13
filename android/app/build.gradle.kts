@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.hisabkitab.hisabkitab"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -22,13 +22,18 @@ android {
     defaultConfig {
         applicationId = "com.hisabkitab.hisabkitab"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0.0"
     }
 
     buildTypes {
-        release {
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
+        getByName("debug") {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
